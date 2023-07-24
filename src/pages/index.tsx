@@ -1,17 +1,15 @@
-import { SignInButton, useUser } from "@clerk/nextjs";
 import Head from "next/head";
-
-import { api } from "~/utils/api";
-import type { RouterOutputs } from "~/utils/api";
-
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
-import { LoadingPage, LoadingSpinner } from "~/components/Loading";
-import { useState } from "react";
 import toast from "react-hot-toast";
+import { api } from "~/utils/api";
+import { useState } from "react";
+import { PageLayout } from "~/components/layout";
+import { SignInButton, useUser } from "@clerk/nextjs";
+import { LoadingPage, LoadingSpinner } from "~/components/loading";
+import { RecommendationView } from "~/components/recommendationView";
 
-dayjs.extend(relativeTime);
+import type { NextPage } from "next";
+
 
 const CreatePost = () => {
   const { user } = useUser();
@@ -76,31 +74,6 @@ const CreatePost = () => {
   )
 }
 
-type PostWithUser = RouterOutputs["recommendations"]["getAll"][number];
-
-const RecommendationView = (props: PostWithUser) => {
-  const { recommendation, author } = props;
-
-  return (
-    <div key={recommendation.id} className="flex gap-3 p-4 border-b border-slate-400">
-      <Image
-        src={author.profileImageUrl}
-        alt={`${author.username}'s profile image`}
-        className="w-14 h-14 rounded-full"
-        width={56}
-        height={56}
-      />
-      <div className="flex flex-col">
-        <div className="flex gap-2 text-slate-300">
-          <span>{`@${author.username}`}</span>
-          <span className="font-thin">{dayjs(recommendation.createdAt).fromNow()}</span>
-        </div>
-        <span className="text-xl">{recommendation.content}</span>
-      </div>
-    </div>
-  )
-}
-
 const Feed = () => {
   const { data, isLoading: postsLoading } = api.recommendations.getAll.useQuery();
 
@@ -117,7 +90,7 @@ const Feed = () => {
   )
 }
 
-const Home = () => {
+const Home: NextPage = () => {
   const { isSignedIn, isLoaded: userLoading } = useUser();
 
   // this makes it fetch asap so we can use the cached data within react query (since is the same information is safe to use)
@@ -134,15 +107,14 @@ const Home = () => {
         <meta name="keywords" content="Software Developer, Front-End, Back-End, Full-Stack, Typescript, NextJS, React, Java, Spring, SQL, Mobile Development, Twitter Clone" />
         <link rel="icon" href="/main-logo.png" />
       </Head>
-      <main className="flex h-screen justify-center">
-        <div className="w-full h-full md:max-w-2xl border-x border-slate-400">
-          <div className="border-b border-slate-400 p-4 flex">
-            {isSignedIn && <CreatePost />}
-            {!isSignedIn && <div className="flex justify-center"><SignInButton /></div>}
-          </div>
-          <Feed />
+      <PageLayout >
+        <div className="border-b border-slate-400 p-4 flex">
+          {isSignedIn && <CreatePost />}
+          {!isSignedIn && <div className="flex justify-center"><SignInButton /></div>}
         </div>
-      </main>
+
+        <Feed />
+      </PageLayout>
     </>
   );
 }
