@@ -15,7 +15,7 @@ import type { GetStaticProps, NextPage } from "next";
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.recommendations.getRecommendationByUserId.useQuery({
     userId: props.userId
-  })
+  });
 
   if (isLoading) return <LoadingPage />;
 
@@ -25,8 +25,8 @@ const ProfileFeed = (props: { userId: string }) => {
     <div className="flex flex-col">
       {data.map((recommendation) => (<RecommendationView {...recommendation} key={recommendation.recommendation.id} />))}
     </div>
-  )
-}
+  );
+};
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   const { data } = api.profile.getUserByUsername.useQuery({
@@ -70,7 +70,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   const username = slug.replace("@", "");
 
-  await ssg.profile.getUserByUsername.prefetch({ username })
+  await ssg.profile.getUserByUsername.prefetch({ username });
 
   return {
     props: {
