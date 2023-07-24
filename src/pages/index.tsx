@@ -8,11 +8,22 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import { LoadingPage } from "~/components/Loading";
+import { useState } from "react";
 
 dayjs.extend(relativeTime);
 
 const CreatePost = () => {
   const { user } = useUser();
+  const [postContent, setPostContent] = useState("");
+
+  const ctx = api.useContext();
+
+  const { mutate, isLoading: isPosting } = api.recommendations.create.useMutation({
+    onSuccess: () => {
+      setPostContent("");
+      void ctx.recommendations.getAll.invalidate();
+    }
+  });
 
   if (!user) return null;
 
@@ -25,7 +36,20 @@ const CreatePost = () => {
         width={56}
         height={56}
       />
-      <input type="text" placeholder="Create your message!" className="bg-transparent indent-4 grow outline-none" />
+      <input
+        type="text"
+        placeholder="Create your message!"
+        className="bg-transparent indent-4 grow outline-none"
+        value={postContent}
+        onChange={(e) => setPostContent(e.target.value)}
+        disabled={isPosting}
+      />
+      <button
+        onClick={() => mutate({ content: postContent })}
+        disabled={isPosting}
+      >
+        Send
+      </button>
     </div>
   )
 }
@@ -92,7 +116,7 @@ const Home = () => {
         <div className="w-full h-full md:max-w-2xl border-x border-slate-400">
           <div className="border-b border-slate-400 p-4 flex">
             {isSignedIn && <CreatePost />}
-            {isSignedIn && <div className="flex justify-center"><SignInButton /></div>}
+            {!isSignedIn && <div className="flex justify-center"><SignInButton /></div>}
           </div>
           <Feed />
         </div>
