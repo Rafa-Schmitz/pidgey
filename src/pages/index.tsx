@@ -1,15 +1,17 @@
+import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import Head from "next/head";
-
-import { api } from "~/utils/api";
-import type { RouterOutputs } from "~/utils/api";
-
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "~/components/Loading";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import Link from "next/link";
+import { PageLayout } from "~/components/layout";
+
+import type { NextPage } from "next";
+import type { RouterOutputs } from "~/utils/api";
 
 dayjs.extend(relativeTime);
 
@@ -83,19 +85,27 @@ const RecommendationView = (props: PostWithUser) => {
 
   return (
     <div key={recommendation.id} className="flex gap-3 p-4 border-b border-slate-400">
-      <Image
-        src={author.profileImageUrl}
-        alt={`${author.username}'s profile image`}
-        className="w-14 h-14 rounded-full"
-        width={56}
-        height={56}
-      />
+      <Link href={`/@${author.username}`}>
+        <Image
+          src={author.profileImageUrl}
+          alt={`${author.username}'s profile image`}
+          className="w-14 h-14 rounded-full"
+          width={56}
+          height={56}
+        />
+      </Link>
       <div className="flex flex-col">
         <div className="flex gap-2 text-slate-300">
-          <span>{`@${author.username}`}</span>
-          <span className="font-thin">{dayjs(recommendation.createdAt).fromNow()}</span>
+          <Link href={`/@${author.username}`}>
+            <span>{`@${author.username}`}</span>
+          </Link>
+          <Link href={`/post/${recommendation.id}`}>
+            <span className="font-thin">{dayjs(recommendation.createdAt).fromNow()}</span>
+          </Link>
         </div>
-        <span className="text-xl">{recommendation.content}</span>
+        <Link href={`/post/${recommendation.id}`}>
+          <span className="text-xl">{recommendation.content}</span>
+        </Link>
       </div>
     </div>
   )
@@ -117,7 +127,7 @@ const Feed = () => {
   )
 }
 
-const Home = () => {
+const Home: NextPage = () => {
   const { isSignedIn, isLoaded: userLoading } = useUser();
 
   // this makes it fetch asap so we can use the cached data within react query (since is the same information is safe to use)
@@ -134,15 +144,14 @@ const Home = () => {
         <meta name="keywords" content="Software Developer, Front-End, Back-End, Full-Stack, Typescript, NextJS, React, Java, Spring, SQL, Mobile Development, Twitter Clone" />
         <link rel="icon" href="/main-logo.png" />
       </Head>
-      <main className="flex h-screen justify-center">
-        <div className="w-full h-full md:max-w-2xl border-x border-slate-400">
-          <div className="border-b border-slate-400 p-4 flex">
-            {isSignedIn && <CreatePost />}
-            {!isSignedIn && <div className="flex justify-center"><SignInButton /></div>}
-          </div>
-          <Feed />
+      <PageLayout >
+        <div className="border-b border-slate-400 p-4 flex">
+          {isSignedIn && <CreatePost />}
+          {!isSignedIn && <div className="flex justify-center"><SignInButton /></div>}
         </div>
-      </main>
+
+        <Feed />
+      </PageLayout>
     </>
   );
 }
