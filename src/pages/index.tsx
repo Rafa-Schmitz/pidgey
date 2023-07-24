@@ -7,6 +7,7 @@ import type { RouterOutputs } from "~/utils/api";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
+import { LoadingPage } from "~/components/Loading";
 
 dayjs.extend(relativeTime);
 
@@ -48,19 +49,36 @@ const RecommendationView = (props: PostWithUser) => {
           <span>{`@${author.username}`}</span>
           <span className="font-thin">{dayjs(recommendation.createdAt).fromNow()}</span>
         </div>
-        <span className="">{recommendation.content}</span>
+        <span className="text-xl">{recommendation.content}</span>
       </div>
     </div>
   )
 }
 
-export default function Home() {
-  const user = useUser();
-  const { data, isLoading } = api.recommendations.getAll.useQuery();
+const Feed = () => {
+  const { data, isLoading: postsLoading } = api.recommendations.getAll.useQuery();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (postsLoading) return <LoadingPage />;
 
   if (!data) return <div>No posts to show...</div>;
+
+  return (
+    <div className="flex flex-col">
+      {data.map((post) => (
+        <RecommendationView {...post} key={post.recommendation.id} />
+      ))}
+    </div>
+  )
+}
+
+const Home = () => {
+  const { isSignedIn, isLoaded: userLoading } = useUser();
+
+  // this makes it fetch asap so we can use the cached data within react query (since is the same information is safe to use)
+  api.recommendations.getAll.useQuery();
+
+  // if the user doesn't load we'll return a fragment for now (changing it later)
+  if (!userLoading) return <></>;
 
   return (
     <>
@@ -73,16 +91,14 @@ export default function Home() {
       <main className="flex h-screen justify-center">
         <div className="w-full h-full md:max-w-2xl border-x border-slate-400">
           <div className="border-b border-slate-400 p-4 flex">
-            {user?.isSignedIn && <CreatePost />}
-            {!user?.isSignedIn && <div className="flex justify-center"><SignInButton /></div>}
+            {isSignedIn && <CreatePost />}
+            {isSignedIn && <div className="flex justify-center"><SignInButton /></div>}
           </div>
-          <div className="flex flex-col">
-            {data?.map((post) => (
-              <RecommendationView {...post} key={post.recommendation.id} />
-            ))}
-          </div>
+          <Feed />
         </div>
       </main>
     </>
   );
 }
+
+export default Home;
