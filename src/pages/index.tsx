@@ -7,14 +7,15 @@ import type { RouterOutputs } from "~/utils/api";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
-import { LoadingPage } from "~/components/Loading";
+import { LoadingPage, LoadingSpinner } from "~/components/Loading";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 dayjs.extend(relativeTime);
 
 const CreatePost = () => {
   const { user } = useUser();
-  const [postContent, setPostContent] = useState("");
+  const [postContent, setPostContent] = useState(""); /* should definetly change this to react-hook-form so as to control input without re-rendering and performance issues */
 
   const ctx = api.useContext();
 
@@ -22,6 +23,13 @@ const CreatePost = () => {
     onSuccess: () => {
       setPostContent("");
       void ctx.recommendations.getAll.invalidate();
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors?.content;
+
+      if (errorMessage?.[0]) {
+        toast.error(errorMessage[0]);
+      } else toast.error("Failed to create post! Try again later.");
     }
   });
 
@@ -43,13 +51,27 @@ const CreatePost = () => {
         value={postContent}
         onChange={(e) => setPostContent(e.target.value)}
         disabled={isPosting}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+
+            if (postContent !== "") {
+              mutate({ content: postContent })
+            };
+          }
+        }}
       />
-      <button
-        onClick={() => mutate({ content: postContent })}
-        disabled={isPosting}
-      >
-        Send
-      </button>
+      {postContent !== "" && !isPosting && (
+        <button onClick={() => mutate({ content: postContent })}>
+          Send
+        </button>
+      )}
+
+      {isPosting && (
+        <div className="flex items-center justify-center">
+          <LoadingSpinner size={20} />
+        </div>
+      )}
     </div>
   )
 }
@@ -107,9 +129,9 @@ const Home = () => {
   return (
     <>
       <Head>
-        <title>Rafael Schmitz | Software Developer</title>
+        <title>Cuckoo | Twitter-ish app</title>
         <meta name="description" content="Rafael Schmitz | Software Developer" />
-        <meta name="keywords" content="Software Developer, Front-End, Back-End, Full-Stack, Typescript, NextJS, React, Java, Spring, SQL, Mobile Development" />
+        <meta name="keywords" content="Software Developer, Front-End, Back-End, Full-Stack, Typescript, NextJS, React, Java, Spring, SQL, Mobile Development, Twitter Clone" />
         <link rel="icon" href="/main-logo.png" />
       </Head>
       <main className="flex h-screen justify-center">

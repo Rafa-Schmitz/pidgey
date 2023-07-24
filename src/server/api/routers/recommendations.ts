@@ -63,7 +63,7 @@ export const recommendationsRouter = createTRPCRouter({
   create: privateProcedure
     .input(
       z.object({
-        content: z.string().min(1).max(300),
+        content: z.string().min(1, "Recommendations can't be empty").max(1000, "Recommendations can't be over 1000 words long"),
       })
     )
     .mutation(async ({ ctx, input }) => {
