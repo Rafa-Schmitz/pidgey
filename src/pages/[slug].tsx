@@ -1,14 +1,11 @@
 import Head from "next/head";
 import Image from "next/image";
-import superjson from "superjson";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { api } from "~/utils/api";
-import { prisma } from "~/server/db";
-import { appRouter } from "~/server/api/root";
 import { PageLayout } from "~/components/layout";
 import { LoadingPage } from "~/components/loading";
-import { createServerSideHelpers } from "@trpc/react-query/server";
+import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { RecommendationView } from "~/components/recommendationView";
 
 dayjs.extend(relativeTime);
@@ -66,12 +63,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const ssg = createServerSideHelpers({
-    router: appRouter,
-    ctx: { prisma, userId: null },
-    transformer: superjson,
-  });
-
+  const ssg = generateSSGHelper();
   const slug = context.params?.slug;
 
   if (typeof slug !== "string") throw new Error("no slug");

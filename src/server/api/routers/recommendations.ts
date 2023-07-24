@@ -46,6 +46,18 @@ const ratelimit = new Ratelimit({
 });
 
 export const recommendationsRouter = createTRPCRouter({
+  getRecommendationById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const recommendationPost = await ctx.prisma.recommendation.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!recommendationPost) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return (await addUserDataToPosts([recommendationPost]))[0];
+    }),
+
   getAll: publicProcedure.query(async ({ ctx }) => {
     const recommendations = await ctx.prisma.recommendation.findMany({
       take: 100,
