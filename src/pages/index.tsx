@@ -5,7 +5,7 @@ import { api } from "~/utils/api";
 import { useState } from "react";
 import { PageLayout } from "~/components/layout";
 import { SignInButton, useUser } from "@clerk/nextjs";
-import { LoadingPage, LoadingSpinner } from "~/components/loading";
+import { LoadingSpinner, LoadingPage } from "~/components/loading";
 import { RecommendationView } from "~/components/recommendationView";
 
 import type { NextPage } from "next";

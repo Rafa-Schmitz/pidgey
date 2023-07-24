@@ -4,9 +4,9 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { api } from "~/utils/api";
 import { PageLayout } from "~/components/layout";
-import { LoadingPage } from "~/components/loading";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { RecommendationView } from "~/components/recommendationView";
+import { LoadingPage } from "~/components/loading";
 
 dayjs.extend(relativeTime);
 
