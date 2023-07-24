@@ -3,10 +3,10 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 import { api } from "~/utils/api";
 import { useState } from "react";
-import { PageLayout } from "~/components/layout";
+import { PageLayout } from "~/components/Layout";
 import { SignInButton, useUser } from "@clerk/nextjs";
-import { LoadingPage, LoadingSpinner } from "~/components/loading";
-import { RecommendationView } from "~/components/recommendationView";
+import { LoadingPage, LoadingSpinner } from "~/components/Loading";
+import { RecommendationView } from "~/components/RecommendationView";
 
 import type { NextPage } from "next";
 

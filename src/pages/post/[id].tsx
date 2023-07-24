@@ -1,10 +1,10 @@
 import Head from "next/head";
 import { api } from "~/utils/api";
-import { PageLayout } from "~/components/layout";
+import { PageLayout } from "~/components/Layout";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 
 import type { GetStaticProps, NextPage } from "next";
-import { RecommendationView } from "~/components/recommendationView";
+import { RecommendationView } from "~/components/RecommendationView";
 
 const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
   const { data } = api.recommendations.getRecommendationById.useQuery({
