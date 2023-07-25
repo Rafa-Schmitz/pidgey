@@ -10,7 +10,6 @@ import { RecommendationView } from "~/components/recommendationView";
 
 import type { NextPage } from "next";
 
-
 const CreatePost = () => {
   const { user } = useUser();
   const [postContent, setPostContent] = useState(""); /* should definetly change this to react-hook-form so as to control input without re-rendering and performance issues */
@@ -102,10 +101,9 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Cuckoo | Twitter-ish app</title>
+        <title>Pidgey | Twitter inspired app created with NextJS + T3 Stack</title>
         <meta name="description" content="Rafael Schmitz | Software Developer" />
         <meta name="keywords" content="Software Developer, Front-End, Back-End, Full-Stack, Typescript, NextJS, React, Java, Spring, SQL, Mobile Development, Twitter Clone" />
-        <link rel="icon" href="/main-logo.png" />
       </Head>
       <PageLayout >
         <div className="border-b border-slate-400 p-4 flex">

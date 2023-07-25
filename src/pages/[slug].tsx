@@ -38,10 +38,9 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   return (
     <>
       <Head>
-        <title>{`${data.username}'s Profile | Cuckoo`}</title>
+        <title>{`${data.username}'s Profile | Pidgey`}</title>
         <meta name="description" content="Rafael Schmitz | Software Developer" />
         <meta name="keywords" content="Software Developer, Front-End, Back-End, Full-Stack, Typescript, NextJS, React, Java, Spring, SQL, Mobile Development, Twitter Clone" />
-        <link rel="icon" href="/main-logo.png" />
       </Head>
       <PageLayout>
         <div className="relative h-40 bg-slate-600">

@@ -16,10 +16,9 @@ const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
   return (
     <>
       <Head>
-        <title>{`${data.recommendation.content} - ${data.author.username} | Cuckoo`}</title>
+        <title>{`${data.recommendation.content} - ${data.author.username} | Pidgey`}</title>
         <meta name="description" content="Rafael Schmitz | Software Developer" />
         <meta name="keywords" content="Software Developer, Front-End, Back-End, Full-Stack, Typescript, NextJS, React, Java, Spring, SQL, Mobile Development, Twitter Clone" />
-        <link rel="icon" href="/main-logo.png" />
       </Head>
       <PageLayout>
         <RecommendationView {...data} />
